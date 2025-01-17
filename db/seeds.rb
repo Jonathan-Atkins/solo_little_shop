@@ -7,9 +7,9 @@ puts "Loading PostgreSQL Data dump into local database with command:"
 puts cmd
 system(cmd)
 
-Coupon.destroy_all
+merchant1 = Merchant.create!(name: 'Amazon', id: 5546)
 
-merchant1 = Merchant.first
-
-Coupon.create!(name: "BOGO50", unique_code: "BOGO50", percent_off: 50, merchant: merchant1)
-Coupon.create!(name: "OFF10", unique_code: "OFF10", percent_off: 10, merchant: merchant1)
+# merchant1.coupons.create!(name: 'Buy One Get One', unique_code: 'BOGO', percent_off: 0.50)
+# merchant1.coupons.create!(name: 'Buy One Get One Half', unique_code: 'BOGOHO', percent_off: 0.50)
+# merchant1.coupons.create!(name: 'Half Off', unique_code: 'HO', percent_off: 0.50)
+# merchant1.coupons.create!(name: 'Black Friday', unique_code: 'BF', percent_off: 0.50)

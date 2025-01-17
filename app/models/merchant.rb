@@ -1,6 +1,7 @@
 class Merchant < ApplicationRecord
   has_many :invoices
   has_many :items, dependent: :destroy
+  has_many :coupons, dependent: :destroy
   validates :name, presence: true
 
   def self.find_by_name(name)
