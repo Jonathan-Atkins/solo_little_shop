@@ -6,7 +6,6 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Merchants
-  
   #verb namespace/namespace/endpoint, to: folder/folder/controller#controller_action
   get "/api/v1/merchants/find",      to: "api/v1/merchants/search#show"
   get "/api/v1/merchants",           to: "api/v1/merchants#index"
@@ -31,6 +30,14 @@ Rails.application.routes.draw do
   # Customers
   get "/api/v1/merchants/:merchant_id/customers", to: "api/v1/merchants/customers#customers_by_merchant"
   
+  #Coupons
+  namespace :api do
+    namespace :v1 do
+      resources :merchants do
+        resources :coupons, only: [:index], module: :merchants
+      end
+    end
+  end
   # Defines the root path route ("/")
   # root "posts#index"
 end
