@@ -2,7 +2,8 @@ class Api::V1::Merchants::CouponsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
 
   def index
-    coupons = Coupon.where(merchant_id: params[:merchant_id])
+    merchant = Merchant.find(params[:merchant_id]) # Raises RecordNotFound if merchant doesn't exist
+    coupons = merchant.coupons # Fetches coupons associated with the merchant
     render json: CouponSerializer.new(coupons)
   end
 

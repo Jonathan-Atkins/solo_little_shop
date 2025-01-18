@@ -19,4 +19,15 @@
 
         expect(coupons[:data].count).to eq(5)
       end
+
+      describe "Sad Paths" do
+      it "can fail if merchant does not exist" do
+       
+        get "/api/v1/merchants/8000/coupons"
+        expect(response).to_not be_successful
+        expect(response.status).to eq(404)
+        error = JSON.parse(response.body, symbolize_names: true)[:error].first
+        expect(error[:title]).to eq("Couldn't find Merchant with 'id'=8000")
+      end
     end
+  end
