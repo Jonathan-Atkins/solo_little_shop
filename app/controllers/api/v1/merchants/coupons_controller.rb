@@ -7,11 +7,6 @@ class Api::V1::Merchants::CouponsController < ApplicationController
     render json: CouponSerializer.new(coupons)
   end
 
-  def show
-    coupon = Coupon.find(params[:id]) 
-    render json: CouponSerializer.new(coupon)
-  end
-  
   private
 
   def not_found(exception)

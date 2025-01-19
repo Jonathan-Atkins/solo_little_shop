@@ -41,7 +41,7 @@ Rails.application.routes.draw do
   # Coupons
   namespace :api do
     namespace :v1 do
-      resources :coupons, only: [:show]
+      resources :coupons, only: [:show], module: :coupons
     end
   end
 end
