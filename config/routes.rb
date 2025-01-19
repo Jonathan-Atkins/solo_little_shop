@@ -6,7 +6,6 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Merchants
-  #verb namespace/namespace/endpoint, to: folder/folder/controller#controller_action
   get "/api/v1/merchants/find",      to: "api/v1/merchants/search#show"
   get "/api/v1/merchants",           to: "api/v1/merchants#index"
   post "/api/v1/merchants",          to: "api/v1/merchants#create" 
@@ -25,26 +24,24 @@ Rails.application.routes.draw do
   delete "/api/v1/items/:id",            to: "api/v1/items#destroy"
 
   # Invoices
-  get "api/v1/merchants/:merchant_id/invoices", to: "api/v1/invoices#index"
+  get "/api/v1/merchants/:merchant_id/invoices", to: "api/v1/invoices#index"
 
   # Customers
   get "/api/v1/merchants/:merchant_id/customers", to: "api/v1/merchants/customers#customers_by_merchant"
-  
-  #MerchantCoupons
+
+  # Coupons by Merchant (Specific route for merchant's coupons)
   namespace :api do
     namespace :v1 do
       resources :merchants do
-        resources :coupons, only: [:index, :show], module: :merchants
+        resources :coupons, only: [:index], module: :merchants
       end
     end
   end
 
-  #Coupons
+  # Coupons
   namespace :api do
     namespace :v1 do
-      resources :merchants do
-        resources :coupons, only: [:show]
-      end
+      resources :coupons, only: [:show]
     end
   end
 end

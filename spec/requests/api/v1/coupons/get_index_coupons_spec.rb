@@ -18,6 +18,22 @@
         coupons = JSON.parse(response.body, symbolize_names: true)
 
         expect(coupons[:data].count).to eq(5)
+        expect(coupons[:data][0][:id]).to eq(coupon1.id.to_s)
+        expect(coupons[:data][0][:attributes][:name]).to eq('Buy One Get One')
+        
+        expect(coupons[:data][1][:id]).to eq(coupon2.id.to_s)
+        expect(coupons[:data][1][:attributes][:name]).to eq('10% Off')
+    
+        expect(coupons[:data][2][:id]).to eq(coupon3.id.to_s)
+        expect(coupons[:data][2][:attributes][:name]).to eq('20% Off')
+       
+    
+        expect(coupons[:data][3][:id]).to eq(coupon4.id.to_s)
+        expect(coupons[:data][3][:attributes][:name]).to eq('Free Shipping')
+        
+    
+        expect(coupons[:data][4][:id]).to eq(coupon5.id.to_s)
+        expect(coupons[:data][4][:attributes][:name]).to eq('15% Off Orders Over $50')
       end
 
       describe "Sad Paths" do
