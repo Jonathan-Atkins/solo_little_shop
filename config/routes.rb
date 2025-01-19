@@ -30,14 +30,21 @@ Rails.application.routes.draw do
   # Customers
   get "/api/v1/merchants/:merchant_id/customers", to: "api/v1/merchants/customers#customers_by_merchant"
   
+  #MerchantCoupons
+  namespace :api do
+    namespace :v1 do
+      resources :merchants do
+        resources :coupons, only: [:index, :show], module: :merchants
+      end
+    end
+  end
+
   #Coupons
   namespace :api do
     namespace :v1 do
       resources :merchants do
-        resources :coupons, only: [:index], module: :merchants
+        resources :coupons, only: [:show]
       end
     end
   end
-  # Defines the root path route ("/")
-  # root "posts#index"
 end
