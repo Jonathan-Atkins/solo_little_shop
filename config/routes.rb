@@ -26,7 +26,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :merchants do
-        resources :coupons, only: [:index], module: :merchants
+        resources :coupons, only: [:index, :create, :update], module: :merchants
       end
     end
   end

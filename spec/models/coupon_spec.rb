@@ -14,7 +14,7 @@ describe Coupon, type: :model do
       expect(coupon).to be_valid
       expect(coupon.name).to eq('Buy One Get One')
       expect(coupon.unique_code).to eq('BOGO')
-      exceeds(coupon.active).to be_falsey
+      expect(coupon.active).to eq(true)
       expect(coupon.percent_off).to eq(0.5)
       expect(coupon.used_count).to eq(0)
       expect(coupon.merchant_id).to eq(merchant1.id)
