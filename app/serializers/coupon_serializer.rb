@@ -1,6 +1,6 @@
 class CouponSerializer
   include JSONAPI::Serializer
-  attributes :name, :unique_code, :percent_off, :dollar_off, :active
+  attributes :id ,:name, :unique_code, :percent_off, :dollar_off, :active
 
   attribute :status_message do |coupon|
     used_count = Invoice.where(coupon_id: coupon.id).count
