@@ -3,11 +3,8 @@ class Api::V1::Coupons::CouponsController < ApplicationController
 
   def show
     coupon = Coupon.find(params[:id])
+    coupon.check_and_update_status  
     used_count = Invoice.where(coupon_id: coupon.id).count
-
-    if used_count > 5
-      coupon.update!(active: false) unless coupon.active?
-    end
 
     render json: { coupon: CouponSerializer.new(coupon), used_count: used_count }
   end
