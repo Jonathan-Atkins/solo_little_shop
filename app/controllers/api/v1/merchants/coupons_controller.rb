@@ -3,8 +3,14 @@ class Api::V1::Merchants::CouponsController < ApplicationController
 
   def index
     merchant = Merchant.find(params[:merchant_id])
-    coupons = merchant.coupons
-    render json: CouponSerializer.new(coupons)
+    coupons  = merchant.coupons
+    if params[:status] == "active"
+      render json: CouponSerializer.new(coupons.active), status: :ok 
+    elsif params[:status] == "inactive"
+      render json: CouponSerializer.new(coupons.inactive), status: :ok 
+    else
+      render json: CouponSerializer.new(coupons), status: :ok
+    end
   end
 
   def create
@@ -23,11 +29,11 @@ class Api::V1::Merchants::CouponsController < ApplicationController
     if coupon.active
       coupon.active = false
       coupon.save!
-      render json: { message: "#{coupon.name} is now inactive" }, status: :ok
+      render json: { message: "#{coupon.name} is now inactive", active: coupon.active }, status: :ok
     else
       coupon.active = true
       coupon.save!
-      render json: { message: "#{coupon.name} is now active" }, status: :ok
+      render json: { message: "#{coupon.name} is now active", active: coupon.active }, status: :ok
     end
   end
 

@@ -35,6 +35,41 @@
         expect(coupons[:data][4][:attributes][:name]).to eq('15% Off Orders Over $50')
       end
 
+      it "can sort by active stauts" do
+        merchant1 = Merchant.create!(name: 'Amazon') 
+        coupon1 = Coupon.create!(name: 'Buy One Get One', unique_code: 'BOGO', percent_off: 0.5, merchant_id: merchant1.id, active: false)
+        coupon2 = Coupon.create!(name: '10% Off', unique_code: 'TENOFF', percent_off: 0.1, merchant_id: merchant1.id)
+        coupon3 = Coupon.create!(name: '20% Off', unique_code: 'TWENTYOFF', percent_off: 0.2, merchant_id: merchant1.id)
+        coupon4 = Coupon.create!(name: 'Free Shipping', unique_code: 'FREESHIP', percent_off: 0.0, merchant_id: merchant1.id)
+        coupon5 = Coupon.create!(name: '15% Off Orders Over $50', unique_code: 'FIFTEEN50', percent_off: 0.15, merchant_id: merchant1.id, active: false)
+
+        get "/api/v1/merchants/#{merchant1.id}/coupons", params: {status: 'active'}
+
+        coupons = JSON.parse(response.body, symbolize_names: true)[:data]
+
+        expect(response).to be_successful
+        expect(response.status).to eq(200)
+        expect(coupons.count).to eq(3)
+        expect(coupons.first[:id].to_i).to eq(coupon2.id)
+      end
+
+      it "can sort by active stauts" do
+        merchant1 = Merchant.create!(name: 'Amazon') 
+        coupon1 = Coupon.create!(name: 'Buy One Get One', unique_code: 'BOGO', percent_off: 0.5, merchant_id: merchant1.id, active: false)
+        coupon2 = Coupon.create!(name: '10% Off', unique_code: 'TENOFF', percent_off: 0.1, merchant_id: merchant1.id)
+        coupon3 = Coupon.create!(name: '20% Off', unique_code: 'TWENTYOFF', percent_off: 0.2, merchant_id: merchant1.id)
+        coupon4 = Coupon.create!(name: 'Free Shipping', unique_code: 'FREESHIP', percent_off: 0.0, merchant_id: merchant1.id)
+        coupon5 = Coupon.create!(name: '15% Off Orders Over $50', unique_code: 'FIFTEEN50', percent_off: 0.15, merchant_id: merchant1.id, active: false)
+
+        get "/api/v1/merchants/#{merchant1.id}/coupons", params: {status: 'inactive'}
+
+        coupons = JSON.parse(response.body, symbolize_names: true)[:data]
+
+        expect(response).to be_successful
+        expect(response.status).to eq(200)
+        expect(coupons.count).to eq(2)
+      end
+
       describe "Sad Paths" do
       it "can fail if merchant does not exist" do
        

@@ -39,9 +39,7 @@ RSpec.describe "Coupons API", type: :request do
       expect(response.status).to eq(200)
 
       coupon_response = JSON.parse(response.body, symbolize_names: true)
-      
       expect(coupon_response[:used_count]).to eq(3)
-    
     end
 
   describe "Sad Paths" do

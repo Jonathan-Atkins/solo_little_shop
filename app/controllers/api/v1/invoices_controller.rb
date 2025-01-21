@@ -2,15 +2,10 @@ class Api::V1::InvoicesController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :merchant_not_found_error_response
 
   def index
-    merchant = Merchant.find(params[:merchant_id])
-    invoices = merchant.invoices
+      merchant = Merchant.find(params[:merchant_id])
+      invoices = merchant.invoices
 
-    if params[:status]
-      invoice_status = invoices.select { |invoice| invoice.status == params[:status] }
-      render json: InvoiceSerializer.new(invoice_status)
-    else
       render json: InvoiceSerializer.new(invoices)
-    end
   end
 
   def create

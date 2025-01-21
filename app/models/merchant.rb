@@ -19,4 +19,12 @@ class Merchant < ApplicationRecord
   def self.add_item_count
     left_joins(:items).select("merchants.*, COUNT(items.id) AS item_count").group("merchants.id").order(id: :asc)
   end
+
+  def coupons_count
+    coupons.count
+  end
+  
+  def invoice_coupon_count
+    invoices.where.not(coupon_id: nil).count
+  end
 end

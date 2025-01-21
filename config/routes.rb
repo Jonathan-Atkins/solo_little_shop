@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
-  get "/api/v1/merchants/find",      to: "api/v1/merchants/search#show"
+  get "/api/v1/merchants/find",       to: "api/v1/merchants/search#show"
   get "/api/v1/merchants",           to: "api/v1/merchants#index"
   post "/api/v1/merchants",          to: "api/v1/merchants#create" 
   patch "/api/v1/merchants/:id",     to: "api/v1/merchants#update"
@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   get "/api/v1/merchants/:id",       to: "api/v1/merchants#show"
 
   get "/api/v1/items/:id/merchant",      to: "api/v1/items#find_merchant"
-  get "/api/v1/items/find_all",          to: "api/v1/items/search#show"
+  get "/api/v1/items/find_all",           to: "api/v1/items/search#show"
   get "/api/v1/items",                   to: "api/v1/items#index"
   get "/api/v1/items/:id",               to: "api/v1/items#show"
   post "/api/v1/items",                  to: "api/v1/items#create"

@@ -17,5 +17,5 @@ class Invoice < ApplicationRecord
     self.coupon = coupon
     save
     { success: true }
-  end
+  end  
 end
