@@ -45,6 +45,7 @@ group :development, :test do
   gem "rspec-rails"
   gem "simplecov"
   gem "shoulda-matchers"
+  gem 'factory_bot_rails'
 end
 
 group :development do

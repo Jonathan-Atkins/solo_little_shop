@@ -9,7 +9,6 @@ RSpec.describe "Get all Merchants", type: :request do
     expect(response.status).to eq(200)
 
     results = JSON.parse(response.body, symbolize_names: true)[:data]
-
     expect(results.count).to eq(2)
 
     results.each do |result|
@@ -83,6 +82,37 @@ RSpec.describe "Get all Merchants", type: :request do
         expect(result[:attributes][:name]).to eq(merchant2.name)
         expect(result[:attributes][:item_count].to_i).to be_a(Integer)
       end
+    end
+  end
+
+  it "can return merchants with count of coupons and invoices with coupons" do
+    amazon = Merchant.create!(name: 'Amazon')
+    brush  = Item.create!(name: 'Brush', description: 'Big Brush', unit_price: 5.20, merchant_id: amazon.id)
+    comb   = Item.create!(name: 'Comb', description: 'Little Comb', unit_price: 6.75, merchant_id: amazon.id) 
+    coupon = Coupon.create!(name: 'Buy One Get One', unique_code: 'BOGO', percent_off: 0.5, merchant_id: amazon.id)
+    parker = Customer.create!(first_name: "Parker", last_name: "Daugherty")
+  
+    invoice   = Invoice.create!(customer_id: parker.id, merchant_id: amazon.id, status: 'shipped', coupon_id: coupon.id ) 
+    InvoiceItem.create!(item_id: brush.id, invoice_id: invoice.id)
+    InvoiceItem.create!(item_id: comb.id, invoice_id: invoice.id)
+
+    get "/api/v1/merchants"
+
+    expect(response.status).to eq(200)
+
+    merchants = JSON.parse(response.body, symbolize_names: true)[:data]
+    
+    expect(merchants).to be_an(Array)
+    
+    merchants.each do |merchant|
+      expect(merchant[:id]).to be_an(String)
+      expect(merchant[:type]).to eq('merchant')
+      
+      attrs = merchant[:attributes]
+
+      expect(attrs[:name]).to be_an(String)
+      expect(attrs[:coupons_count]).to be_an(Integer)
+      expect(attrs[:invoice_coupon_count]).to be_an(Integer)
     end
   end
 end
