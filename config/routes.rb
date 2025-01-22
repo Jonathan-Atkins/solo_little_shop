@@ -18,9 +18,10 @@ Rails.application.routes.draw do
   delete "/api/v1/items/:id",            to: "api/v1/items#destroy"
 
   get "/api/v1/merchants/:merchant_id/invoices", to: "api/v1/invoices#index"
-  post "/api/v1/merchants/:merchant_id/invoices", to: "api/v1/invoices#create" # Add this route for creating invoices
+  post "/api/v1/merchants/:merchant_id/invoices", to: "api/v1/invoices#create"
 
-  patch "/api/v1/merchants/:merchant_id/invoices/:id/add_coupon", to: "api/v1/invoices#add_coupon"  # Corrected route for applying coupon
+  patch "/api/v1/merchants/:merchant_id/invoices/:id/add_coupon", to: "api/v1/invoices#add_coupon"
+  patch "/api/v1/invoices/:id/apply_coupon", to: "api/v1/invoices#apply_coupon" 
 
   get "/api/v1/merchants/:merchant_id/customers", to: "api/v1/merchants/customers#customers_by_merchant"
 
