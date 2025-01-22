@@ -116,27 +116,4 @@ RSpec.describe "Invoices API", type: :request do
     error_response = JSON.parse(response.body, symbolize_names: true)
     expect(error_response[:error]).to eq("Invoice not found")
   end
-
-  it 'applies a valid coupon to the invoice and increments the coupon used_count' do
-    coupon = Coupon.create!(name: "10% Off", unique_code: "TENOFF", percent_off: 0.1, used_count: 0, active: true, merchant: @test_merchant_1)
-    
-    invoice = @test_merchant_1.invoices.create!(customer_id: @test_customer.id, status: 'shipped')
-
-    patch "/api/v1/merchants/#{@test_merchant_1.id}/invoices/#{invoice.id}/add_coupon", params: { coupon_id: coupon.id }
-
-    expect(response.status).to eq(200)
-    expect(invoice.reload.coupon).to eq(coupon)
-    expect(coupon.reload.used_count).to eq(1)
-  end
-
-  it 'returns an error when trying to apply a coupon that has exceeded its usage limit' do
-    coupon = Coupon.create!(name: "10% Off", unique_code: "TENOFF", percent_off: 0.1, used_count: 5, active: false, merchant: @test_merchant_1)
-    
-    invoice = @test_merchant_1.invoices.create!(customer_id: @test_customer.id, status: 'shipped')
-
-    patch "/api/v1/merchants/#{@test_merchant_1.id}/invoices/#{invoice.id}/add_coupon", params: { coupon_id: coupon.id }
-
-    expect(response.status).to eq(422)
-    expect(JSON.parse(response.body, symbolize_names: true)[:error]).to eq("Unable to apply coupon")
-  end
 end

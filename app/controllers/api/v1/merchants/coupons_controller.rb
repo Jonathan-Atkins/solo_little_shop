@@ -21,12 +21,10 @@ class Api::V1::Merchants::CouponsController < ApplicationController
     merchant = Merchant.find(params[:merchant_id])
     coupon = merchant.coupons.create!(coupon_params)
     render json: CouponSerializer.new(coupon), status: :ok
-  rescue ActiveRecord::RecordInvalid => error_message
-    render json: { message: "unprocessable entity", errors: error_message.record.errors.full_messages }, status: 422
   end
 
   def update
-    merchant = Merchant.find(params[:merchant_id]) # This will raise ActiveRecord::RecordNotFound if merchant is invalid
+    merchant = Merchant.find(params[:merchant_id]) 
     coupon = Coupon.find(params[:id])
     coupon.active = !coupon.active
     coupon.save!

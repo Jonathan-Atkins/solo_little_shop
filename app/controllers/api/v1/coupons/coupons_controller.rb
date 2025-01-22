@@ -3,8 +3,6 @@ class Api::V1::Coupons::CouponsController < ApplicationController
 
   def show
     coupon = Coupon.find(params[:id])
-    coupon.check_and_update_status  
-  
     render json: CouponSerializer.new(coupon), status: :ok
   end
 

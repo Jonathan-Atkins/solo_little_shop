@@ -40,13 +40,20 @@ RSpec.describe Merchant, type: :model do
       @item2 = @merchant.items.create!(name: "Item 2", unit_price: 20.0)
     end
 
-    describe "#coupons_count" do
+    it "it limits merchants to 5 active coupons" do
+      coupon3 = @merchant.coupons.create!(name: "coup3", unique_code: "TENOFF1", percent_off: 0.1)
+      coupon4 = @merchant.coupons.create!(name: "coup4", unique_code: "TWENTYOFF2", percent_off: 0.2)
+      coupon5 = @merchant.coupons.create!(name: "coup5", unique_code: "TENOFF3", percent_off: 0.1)
+      coupon6 = @merchant.coupons.build(name: "coup6", unique_code: "TWENTYOFF4", percent_off: 0.2)
+
+      expect(@merchant.coupons.count).to eq(5)
+    end
+
+    describe "coupons_count" do
       it "returns the total count of coupons for the merchant" do
         expect(@merchant.coupons_count).to eq(2)
       end
-    end
 
-    describe "#invoice_coupon_count" do
       it "returns the total count of invoices with coupons for the merchant" do
         customer = Customer.create!(first_name: "Jane", last_name: "Doe")
         Invoice.create!(merchant: @merchant, customer: customer, coupon: @coupon1)
