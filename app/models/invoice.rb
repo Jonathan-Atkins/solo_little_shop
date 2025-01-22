@@ -8,7 +8,7 @@ class Invoice < ApplicationRecord
     coupon.increment!(:used_count)
     coupon.reload
   
-    coupon.check_and_update_status  # This just updates the coupon's status if needed
+    coupon.check_and_update_status 
   
     if !coupon.active
       return { success: false, error: "#{coupon.name} cannot exceed 5. It has been used #{coupon.used_count}" }

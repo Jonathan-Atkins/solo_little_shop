@@ -69,6 +69,27 @@
         expect(coupons.count).to eq(2)
       end
 
+      it "returns a message if merchant has no coupons" do
+        merchant = Merchant.create!(name: 'Wally-World')
+      
+        get "/api/v1/merchants/#{merchant.id}/coupons"
+      
+        expect(response).to have_http_status(200)
+        message_response = JSON.parse(response.body, symbolize_names: true)
+        expect(message_response[:message]).to eq("#{merchant.name} has no coupons")
+      end
+
+      it "returns an empty array when no active coupons are found" do
+        merchant = Merchant.create!(name: 'Wally-World')
+        coupon = merchant.coupons.create!(name: 'BOGO', unique_code: 'BOGO123', percent_off: 0.5, active: false)
+      
+        get "/api/v1/merchants/#{merchant.id}/coupons", params: { status: 'active' }
+      
+        expect(response).to have_http_status(200)
+        coupons = JSON.parse(response.body, symbolize_names: true)[:data]
+        expect(coupons).to eq([])
+      end
+
       describe "Sad Paths" do
       it "can fail if merchant does not exist" do
        

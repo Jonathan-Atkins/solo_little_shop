@@ -1,5 +1,6 @@
 class Api::V1::Merchants::CouponsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
+  rescue_from ActiveRecord::RecordInvalid, with: :unprocessable_entity
 
   def index
     merchant = Merchant.find(params[:merchant_id])
@@ -25,8 +26,11 @@ class Api::V1::Merchants::CouponsController < ApplicationController
   end
 
   def update
+    merchant = Merchant.find(params[:merchant_id]) # This will raise ActiveRecord::RecordNotFound if merchant is invalid
     coupon = Coupon.find(params[:id])
-    coupon.update!(coupon_params)
+    coupon.active = !coupon.active
+    coupon.save!
+    
     status_message = coupon.active ? "active" : "inactive"
     render json: { message: "#{coupon.name} is now #{status_message}", active: coupon.active }, status: :ok
   end
@@ -39,5 +43,9 @@ class Api::V1::Merchants::CouponsController < ApplicationController
 
   def not_found(exception)
     render json: ErrorSerializer.new(exception, "404").format_error, status: :not_found
+  end
+
+  def unprocessable_entity(exception)
+    render json: { message: "unprocessable entity", errors: exception.record.errors.full_messages }, status: :unprocessable_entity
   end
 end
