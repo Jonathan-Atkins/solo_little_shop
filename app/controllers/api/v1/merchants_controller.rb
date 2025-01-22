@@ -11,7 +11,8 @@ class Api::V1::MerchantsController < ApplicationController
     else
       merchants = Merchant.all
     end
-    render json: MerchantSerializer.new(merchants, { params: { count: params[:count] } }), status: :ok
+  
+    render json: MerchantSerializer.new(merchants), status: :ok
   end
 
   def show

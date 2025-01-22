@@ -10,7 +10,6 @@
         coupon5 = Coupon.create!(name: '15% Off Orders Over $50', unique_code: 'FIFTEEN50', percent_off: 0.15, merchant_id: merchant1.id)
     
         get "/api/v1/merchants/#{merchant1.id}/coupons"
-    
         expect(response).to be_successful
         expect(response.status).to eq(200)
     

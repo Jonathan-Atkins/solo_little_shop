@@ -6,7 +6,7 @@ RSpec.describe 'Updates a Coupon', type: :request do
       merchant = Merchant.create!(name: 'Wally-World')
       coupon = merchant.coupons.create!(name: 'BOGO', unique_code: 'BOGO123', percent_off: 0.5, dollar_off: nil, active: true)
 
-      patch "/api/v1/merchants/#{merchant.id}/coupons/#{coupon.id}"
+      patch "/api/v1/merchants/#{merchant.id}/coupons/#{coupon.id}", params: {active: false}
 
       expect(response).to have_http_status(200)
 
@@ -21,7 +21,7 @@ RSpec.describe 'Updates a Coupon', type: :request do
       merchant = Merchant.create!(name: 'Wally-World')
       coupon = merchant.coupons.create!(name: 'BOGO', unique_code: 'BOGO123', percent_off: 0.5, dollar_off: nil, active: false)
 
-      patch "/api/v1/merchants/#{merchant.id}/coupons/#{coupon.id}"
+      patch "/api/v1/merchants/#{merchant.id}/coupons/#{coupon.id}", params: {active: true}
 
       expect(response).to have_http_status(200)
 
