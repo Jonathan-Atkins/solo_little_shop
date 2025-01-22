@@ -5,12 +5,12 @@ class Api::V1::Merchants::CouponsController < ApplicationController
   def index
     merchant = Merchant.find(params[:merchant_id])
     coupons = merchant.coupons
-
+  
     if coupons.empty?
       render json: { message: "#{merchant.name} has no coupons" }, status: :ok
-    elsif params[:status] == "active"
+    elsif params[:active] == "true" 
       render json: CouponSerializer.new(coupons.active), status: :ok
-    elsif params[:status] == "inactive"
+    elsif params[:active] == "false" 
       render json: CouponSerializer.new(coupons.inactive), status: :ok
     else
       render json: CouponSerializer.new(coupons), status: :ok
