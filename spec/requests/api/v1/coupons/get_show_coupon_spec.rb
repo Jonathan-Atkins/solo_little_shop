@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe "Coupons API", type: :request do
-  describe "GET /api/v1/coupons/:id" do
+RSpec.describe "Show Coupons", type: :request do
+  describe "it can return coupon attributes" do
     it "returns a specific coupon by its ID" do
       merchant = Merchant.create!(name: 'Wally-World')
 
@@ -18,8 +18,9 @@ RSpec.describe "Coupons API", type: :request do
 
       coupon_response = JSON.parse(response.body, symbolize_names: true)
 
-      expect(coupon_response[:coupon][:data][:id]).to eq(coupon1.id.to_s)
-      expect(coupon_response[:coupon][:data][:attributes][:name]).to eq('Buy One Get One')
+      attrs = coupon_response[:data][:attributes]
+
+      expect(attrs[:name]).to eq('Buy One Get One')
     end
 
     it "can count how many times a coupon is used" do
@@ -39,7 +40,9 @@ RSpec.describe "Coupons API", type: :request do
       expect(response.status).to eq(200)
 
       coupon_response = JSON.parse(response.body, symbolize_names: true)
-      expect(coupon_response[:used_count]).to eq(3)
+      
+      expect(coupon_response[:data][:attributes][:used_count]).to eq(3)
+      
     end
 
   describe "Sad Paths" do

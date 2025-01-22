@@ -1,11 +1,19 @@
 class Api::V1::InvoicesController < ApplicationController
-  rescue_from ActiveRecord::RecordNotFound, with: :merchant_not_found_error_response
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found_error_response
 
   def index
+    begin
       merchant = Merchant.find(params[:merchant_id])
       invoices = merchant.invoices
 
+      if params[:status].present?
+        invoices = invoices.where(status: params[:status])
+      end
+
       render json: InvoiceSerializer.new(invoices)
+    rescue ActiveRecord::RecordNotFound => e
+      render json: { error: "Merchant not found", message: e.message }, status: :not_found
+    end
   end
 
   def create
@@ -17,22 +25,27 @@ class Api::V1::InvoicesController < ApplicationController
         coupon.increment!(:used_count)
       end
 
-      render json: InvoiceSerializer.new(invoice), status: :created
+      render json: InvoiceSerializer.new(invoice), status: :ok
     else
       render json: { error: invoice.errors.full_messages.to_sentence }, status: :unprocessable_entity
     end
   end
 
   def add_coupon
-    invoice = Invoice.find(params[:id])
-    coupon = Coupon.find(params[:coupon_id])
+    begin
+      invoice = Invoice.find(params[:id])
+    rescue ActiveRecord::RecordNotFound => e
+      return render json: { error: "Invoice not found", message: e.message }, status: :not_found
+    end
 
-    result = invoice.apply_coupon(coupon)
+    coupon = Coupon.find_by(id: params[:coupon_id])
 
-    if result[:success]
+    if coupon.nil?
+      render json: { error: "Coupon not found" }, status: :unprocessable_entity
+    elsif invoice.apply_coupon(coupon)[:success]
       render json: InvoiceSerializer.new(invoice), status: :ok
     else
-      render json: { error: result[:error] }, status: :unprocessable_entity
+      render json: { error: "Unable to apply coupon" }, status: :unprocessable_entity
     end
   end
 
@@ -42,7 +55,7 @@ class Api::V1::InvoicesController < ApplicationController
     params.require(:invoice).permit(:customer_id, :merchant_id, :coupon_id, :status)
   end
 
-  def merchant_not_found_error_response(error)
-    render json: { error: "Merchant not found", message: error.message }, status: :not_found
+  def record_not_found_error_response(error)
+    render json: { error: "Record not found", message: error.message }, status: :not_found
   end
 end

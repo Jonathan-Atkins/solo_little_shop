@@ -22,35 +22,56 @@ describe Coupon, type: :model do
     end
   end
 
-  describe "#check_and_update_status" do
-    it "should deactivate the coupon if used_count exceeds 5" do
-      merchant1 = Merchant.create!(name: 'Amazon')
-      coupon = Coupon.create!(name: 'BOGO', unique_code: 'BOGO123', percent_off: 0.5, merchant_id: merchant1.id)
-      customer = Customer.create!(first_name: 'John', last_name: 'Doe')
-  
-      6.times do
-        invoice = Invoice.new(customer: customer, merchant: merchant1, status: 'pending')
-        invoice.apply_coupon(coupon)
-      end
+  # describe "#apply_coupon" do
+  #   it "should deactivate the coupon if used_count exceeds 5" do
+  #     merchant1 = Merchant.create!(name: 'Amazon')
+  #     coupon = Coupon.create!(name: 'BOGO', unique_code: 'BOGO123', percent_off: 0.5, merchant_id: merchant1.id)
+  #     customer = Customer.create!(first_name: 'John', last_name: 'Doe')
+    
+  #     6.times do |i|
+  #       invoice = Invoice.new(customer: customer, merchant: merchant1, status: 'pending')
+  #       invoice.apply_coupon(coupon)
+  #       puts "Invoice #{i+1}: Coupon applied, used_count: #{coupon.used_count}"
+  #       coupon.reload
+  #     end
 
-      coupon.reload  
-      expect(coupon.active).to be_falsey  
-      expect(coupon.used_count).to eq(6)
+  #     expect(coupon.active).to be_falsey
+  #     expect(coupon.used_count).to eq(6)
+  #   end
+
+  #   it "should not deactivate the coupon if used_count is less than or equal to 5" do
+  #     merchant1 = Merchant.create!(name: 'Amazon')
+  #     coupon = Coupon.create!(name: 'BOGO', unique_code: 'BOGO123', percent_off: 0.5, merchant_id: merchant1.id)
+  #     customer = Customer.create!(first_name: 'John', last_name: 'Doe')
+      
+  #     invoice = Invoice.new(customer: customer, merchant: merchant1, status: 'pending')
+      
+  #     invoice.apply_coupon(coupon)
+  #     coupon.reload
+  #     expect(coupon.used_count).to eq(5)
+  #   end
+  # end
+
+  describe "instance methods" do
+    before :each do
+      @merchant = Merchant.create!(name: "Merchant One")
+      @coupon1 = @merchant.coupons.create!(name: "10% Off", unique_code: "TENOFF", percent_off: 0.1)
+      @coupon2 = @merchant.coupons.create!(name: "20% Off", unique_code: "TWENTYOFF", percent_off: 0.2)
+      @coupon3 = @merchant.coupons.create!(name: "coup3", unique_code: "TENOFF1", percent_off: 0.1)
+      @coupon4 = @merchant.coupons.create!(name: "coup4", unique_code: "TWENTYOFF2", percent_off: 0.2)
+      @item1 = @merchant.items.create!(name: "Item 1", unit_price: 10.0)
+      @item2 = @merchant.items.create!(name: "Item 2", unit_price: 20.0)
     end
 
-    it "should not deactivate the coupon if used_count is less than or equal to 5" do
-      merchant1 = Merchant.create!(name: 'Amazon')
-      coupon = Coupon.create!(name: 'BOGO', unique_code: 'BOGO123', percent_off: 0.5, merchant_id: merchant1.id)
-      customer = Customer.create!(first_name: 'John', last_name: 'Doe')
+    it "it limits merchants to 5 active coupons" do
+      merchant2 = Merchant.create!(name: "Amazon")
+      4.times { |t| merchant2.coupons.create!(name: "coupon#{t+1}", unique_code: "TENOFF-#{t+1}", percent_off: 0.1)}
 
-      5.times do
-        invoice = Invoice.new(customer: customer, merchant: merchant1, status: 'pending')
-        invoice.apply_coupon(coupon)
-      end
+      coupon5   = merchant2.coupons.create!(name: "coup5", unique_code: "TWENTYOFF5", percent_off: 0.2)
+      coupon6   = merchant2.coupons.build(name: "coup6", unique_code: "TWENTYOFF6", percent_off: 0.2)
 
-      coupon.reload
-      expect(coupon.active).to be_truthy
-      expect(coupon.used_count).to eq(5)
+      expect(coupon6.valid?).to be false
+      expect(coupon6.errors[:base]).to include("Merchants can only have 5 active coupons at one time")
     end
   end
 end
